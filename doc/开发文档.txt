@@ -1,0 +1,3 @@
+数据存储使用sqlite
+页面基于现有代码使用MaterialDesign
+注意依赖的版本
