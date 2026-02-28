@@ -47,24 +47,28 @@
 
                         <ComboBox materialDesign:HintAssist.Hint="任务类型"
                                   materialDesign:HintAssist.IsFloating="True"
-                                  SelectedIndex="{Binding TaskTypeIndex}"
+                                  ItemsSource="{Binding TaskTypes}"
+                                  SelectedValuePath="Value"
+                                  DisplayMemberPath="Display"
+                                  SelectedValue="{Binding TaskType}"
                                   Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                  Margin="0,0,0,20">
-                            <ComboBoxItem Content="开发任务"/>
-                            <ComboBoxItem Content="问题处理"/>
-                        </ComboBox>
+                                  Margin="0,0,0,20"/>
 
-                        <TextBox materialDesign:HintAssist.Hint="状态" 
-                                 materialDesign:HintAssist.IsFloating="True"
-                                 Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Margin="0,0,0,20"/>
+                        <ComboBox materialDesign:HintAssist.Hint="状态"
+                                  materialDesign:HintAssist.IsFloating="True"
+                                  ItemsSource="{Binding Statuses}"
+                                  SelectedItem="{Binding Status}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  Margin="0,0,0,20"/>
 
-                        <TextBox materialDesign:HintAssist.Hint="优先级 (数字越大越靠前)" 
-                                 materialDesign:HintAssist.IsFloating="True"
-                                 Text="{Binding PriorityText, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Margin="0,0,0,20"/>
+                        <ComboBox materialDesign:HintAssist.Hint="优先级"
+                                  materialDesign:HintAssist.IsFloating="True"
+                                  ItemsSource="{Binding Priorities}"
+                                  SelectedValuePath="Value"
+                                  DisplayMemberPath="Display"
+                                  SelectedValue="{Binding Priority}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  Margin="0,0,0,20"/>
 
                         <CheckBox Content="是否在列表中显示此任务" 
                                   IsChecked="{Binding IsShow}"

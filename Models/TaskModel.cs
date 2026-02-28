@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using DayJobRecord.Services;
 
 namespace DayJobRecord.Models
 {
@@ -43,7 +44,17 @@ namespace DayJobRecord.Models
         public int Priority
         {
             get => _priority;
-            set { _priority = value; OnPropertyChanged(nameof(Priority)); }
+            set { _priority = value; OnPropertyChanged(nameof(Priority)); OnPropertyChanged(nameof(PriorityDisplay)); }
+        }
+
+        public string PriorityDisplay
+        {
+            get
+            {
+                var priorities = ConfigService.Instance.GetPriorities();
+                var option = priorities.Find(p => p.Value == Priority);
+                return option?.Display ?? Priority.ToString();
+            }
         }
 
         public bool IsVisible

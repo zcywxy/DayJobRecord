@@ -206,7 +206,7 @@
                                            Foreground="#616161" FontSize="11"/>
                                 
                                 <TextBlock Text="优先级：" Foreground="#9E9E9E" FontSize="11"/>
-                                <TextBlock Text="{Binding Priority}" Margin="0,0,12,0" 
+                                <TextBlock Text="{Binding PriorityDisplay}" Margin="0,0,12,0" 
                                            Foreground="#616161" FontSize="11"/>
                                 
                                 <TextBlock Text="显示：" Foreground="#9E9E9E" FontSize="11"/>

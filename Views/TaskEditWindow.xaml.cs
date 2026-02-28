@@ -1,13 +1,21 @@
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using DayJobRecord.Models;
+using DayJobRecord.Services;
 using MaterialDesignThemes.Wpf;
 
 namespace DayJobRecord.Views
 {
     public partial class TaskEditWindow : Window
     {
+        private readonly ConfigService _config = ConfigService.Instance;
+
         public TaskModel Task { get; private set; }
+
+        public List<TaskTypeOption> TaskTypes => _config.GetTaskTypes();
+        public List<string> Statuses => _config.GetStatuses();
+        public List<PriorityOption> Priorities => _config.GetPriorities();
 
         public string TaskName
         {
@@ -15,7 +23,7 @@ namespace DayJobRecord.Views
             set => Task.Name = value;
         }
 
-        public int TaskTypeIndex
+        public int TaskType
         {
             get => (int)Task.TaskType;
             set => Task.TaskType = (TaskType)value;
@@ -27,16 +35,10 @@ namespace DayJobRecord.Views
             set => Task.Status = value;
         }
 
-        public string PriorityText
+        public int Priority
         {
-            get => Task.Priority.ToString();
-            set
-            {
-                if (int.TryParse(value, out int result))
-                {
-                    Task.Priority = result;
-                }
-            }
+            get => Task.Priority;
+            set => Task.Priority = value;
         }
 
         public bool IsShow
@@ -52,7 +54,7 @@ namespace DayJobRecord.Views
         public TaskEditWindow(TaskModel task)
         {
             InitializeComponent();
-            Task = task ?? new TaskModel { Priority = 0, IsShow = true };
+            Task = task ?? new TaskModel { Priority = 0, IsShow = true, Status = "" };
             DataContext = this;
         }
 
