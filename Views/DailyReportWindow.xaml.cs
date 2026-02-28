@@ -41,9 +41,10 @@ namespace DayJobRecord.Views
                     var reportItems = items.Where(i => i.IsReportItem).ToList();
                     foreach (var item in reportItems)
                     {
-                        if (!string.IsNullOrEmpty(item.CompleteDate))
+                        var dateStr = item.EndDate?.ToString("MM-dd") ?? "";
+                        if (!string.IsNullOrEmpty(dateStr))
                         {
-                            sb.AppendLine($"\t{item.CompleteDate}：{item.Content}");
+                            sb.AppendLine($"\t{dateStr}：{item.Content}");
                         }
                         else
                         {
@@ -67,9 +68,10 @@ namespace DayJobRecord.Views
                     var reportItems = items.Where(i => i.IsReportItem).ToList();
                     foreach (var item in reportItems)
                     {
-                        if (!string.IsNullOrEmpty(item.CompleteDate))
+                        var dateStr = item.EndDate?.ToString("MM-dd") ?? "";
+                        if (!string.IsNullOrEmpty(dateStr))
                         {
-                            sb.AppendLine($"\t{item.CompleteDate}处理：{item.Content}");
+                            sb.AppendLine($"\t{dateStr}处理：{item.Content}");
                         }
                         else
                         {

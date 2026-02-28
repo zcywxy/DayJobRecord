@@ -162,10 +162,12 @@ namespace DayJobRecord.ViewModels
             if (window.ShowDialog() == true)
             {
                 var task = window.Task;
+                task.CreatedAt = DateTime.Now;
                 task.Id = _db.AddTask(task);
                 task.PropertyChanged += OnTaskPropertyChanged;
                 Tasks.Add(task);
                 SortTasks();
+                SelectedTask = task;
             }
         }
 

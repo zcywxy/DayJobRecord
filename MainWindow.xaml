@@ -201,12 +201,20 @@
                             </StackPanel>
                             
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                <TextBlock Text="项目：" Foreground="#9E9E9E" FontSize="11"/>
+                                <TextBlock Text="{Binding Project}" Margin="0,0,12,0" 
+                                           Foreground="#616161" FontSize="11"/>
+                                
                                 <TextBlock Text="状态：" Foreground="#9E9E9E" FontSize="11"/>
                                 <TextBlock Text="{Binding Status}" Margin="0,0,12,0" 
                                            Foreground="#616161" FontSize="11"/>
                                 
                                 <TextBlock Text="优先级：" Foreground="#9E9E9E" FontSize="11"/>
                                 <TextBlock Text="{Binding PriorityDisplay}" Margin="0,0,12,0" 
+                                           Foreground="#616161" FontSize="11"/>
+                                
+                                <TextBlock Text="创建：" Foreground="#9E9E9E" FontSize="11"/>
+                                <TextBlock Text="{Binding CreatedAtDisplay}" Margin="0,0,12,0" 
                                            Foreground="#616161" FontSize="11"/>
                                 
                                 <TextBlock Text="显示：" Foreground="#9E9E9E" FontSize="11"/>
@@ -321,9 +329,13 @@
                             </StackPanel>
                             
                             <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,6,0,0">
-                                <TextBlock Text="完成时间：" Foreground="#9E9E9E" FontSize="11"/>
-                                <TextBlock Text="{Binding CompleteDate}"
-                                           Foreground="#616161" FontSize="11" Margin="0,0,16,0"/>
+                                <TextBlock Text="开始：" Foreground="#9E9E9E" FontSize="11"/>
+                                <TextBlock Text="{Binding StartDateDisplay}"
+                                           Foreground="#616161" FontSize="11" Margin="0,0,12,0"/>
+                                
+                                <TextBlock Text="结束：" Foreground="#9E9E9E" FontSize="11"/>
+                                <TextBlock Text="{Binding EndDateDisplay}"
+                                           Foreground="#616161" FontSize="11" Margin="0,0,12,0"/>
                                 
                                 <TextBlock Text="日报项：" Foreground="#9E9E9E" FontSize="11"/>
                                 <TextBlock Text="{Binding IsReportItem, Converter={StaticResource BoolToStringConverter}}" 

@@ -14,6 +14,8 @@ namespace DayJobRecord.Models
         private bool _isVisible = true;
         private bool _isSelected;
         private bool _isShow = true;
+        private DateTime _createdAt;
+        private string _project;
 
         public int Id
         {
@@ -73,6 +75,20 @@ namespace DayJobRecord.Models
         {
             get => _isShow;
             set { _isShow = value; OnPropertyChanged(nameof(IsShow)); }
+        }
+
+        public DateTime CreatedAt
+        {
+            get => _createdAt;
+            set { _createdAt = value; OnPropertyChanged(nameof(CreatedAt)); OnPropertyChanged(nameof(CreatedAtDisplay)); }
+        }
+
+        public string CreatedAtDisplay => CreatedAt.ToString("yyyy-MM-dd HH:mm");
+
+        public string Project
+        {
+            get => _project;
+            set { _project = value; OnPropertyChanged(nameof(Project)); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

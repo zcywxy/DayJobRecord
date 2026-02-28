@@ -16,11 +16,18 @@ namespace DayJobRecord.Views
         public List<TaskTypeOption> TaskTypes => _config.GetTaskTypes();
         public List<string> Statuses => _config.GetStatuses();
         public List<PriorityOption> Priorities => _config.GetPriorities();
+        public List<string> Projects => _config.GetProjects();
 
         public string TaskName
         {
             get => Task.Name;
             set => Task.Name = value;
+        }
+
+        public string Project
+        {
+            get => Task.Project;
+            set => Task.Project = value;
         }
 
         public int TaskType

@@ -77,6 +77,10 @@ namespace DayJobRecord.Services
                 }
                 
                 AddColumnIfNotExists(connection, "TaskItems", "IsReportItem", "INTEGER DEFAULT 1");
+                AddColumnIfNotExists(connection, "Tasks", "CreatedAt", "TEXT DEFAULT ''");
+                AddColumnIfNotExists(connection, "Tasks", "Project", "TEXT DEFAULT ''");
+                AddColumnIfNotExists(connection, "TaskItems", "StartDate", "TEXT DEFAULT ''");
+                AddColumnIfNotExists(connection, "TaskItems", "EndDate", "TEXT DEFAULT ''");
             }
         }
 
@@ -119,7 +123,7 @@ namespace DayJobRecord.Services
                 {
                     while (reader.Read())
                     {
-                        tasks.Add(new TaskModel
+                        var task = new TaskModel
                         {
                             Id = Convert.ToInt32(reader["Id"]),
                             Name = reader["Name"].ToString(),
@@ -127,7 +131,20 @@ namespace DayJobRecord.Services
                             Status = reader["Status"]?.ToString() ?? "",
                             Priority = Convert.ToInt32(reader["Priority"]),
                             IsShow = Convert.ToInt32(reader["IsShow"]) == 1
-                        });
+                        };
+                        
+                        if (reader["CreatedAt"] != DBNull.Value && DateTime.TryParse(reader["CreatedAt"]?.ToString(), out var createdAt))
+                        {
+                            task.CreatedAt = createdAt;
+                        }
+                        else
+                        {
+                            task.CreatedAt = DateTime.MinValue;
+                        }
+                        
+                        task.Project = reader["Project"]?.ToString() ?? "";
+                        
+                        tasks.Add(task);
                     }
                 }
             }
@@ -139,7 +156,7 @@ namespace DayJobRecord.Services
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "INSERT INTO Tasks (Name, TaskType, Status, Priority, IsShow) VALUES (@Name, @TaskType, @Status, @Priority, @IsShow); SELECT last_insert_rowid();";
+                string sql = "INSERT INTO Tasks (Name, TaskType, Status, Priority, IsShow, CreatedAt, Project) VALUES (@Name, @TaskType, @Status, @Priority, @IsShow, @CreatedAt, @Project); SELECT last_insert_rowid();";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Name", task.Name);
@@ -147,6 +164,8 @@ namespace DayJobRecord.Services
                     command.Parameters.AddWithValue("@Status", task.Status ?? "");
                     command.Parameters.AddWithValue("@Priority", task.Priority);
                     command.Parameters.AddWithValue("@IsShow", task.IsShow ? 1 : 0);
+                    command.Parameters.AddWithValue("@CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    command.Parameters.AddWithValue("@Project", task.Project ?? "");
                     return Convert.ToInt32(command.ExecuteScalar());
                 }
             }
@@ -157,7 +176,7 @@ namespace DayJobRecord.Services
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "UPDATE Tasks SET Name = @Name, TaskType = @TaskType, Status = @Status, Priority = @Priority, IsShow = @IsShow WHERE Id = @Id";
+                string sql = "UPDATE Tasks SET Name = @Name, TaskType = @TaskType, Status = @Status, Priority = @Priority, IsShow = @IsShow, Project = @Project WHERE Id = @Id";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Name", task.Name);
@@ -165,6 +184,7 @@ namespace DayJobRecord.Services
                     command.Parameters.AddWithValue("@Status", task.Status ?? "");
                     command.Parameters.AddWithValue("@Priority", task.Priority);
                     command.Parameters.AddWithValue("@IsShow", task.IsShow ? 1 : 0);
+                    command.Parameters.AddWithValue("@Project", task.Project ?? "");
                     command.Parameters.AddWithValue("@Id", task.Id);
                     command.ExecuteNonQuery();
                 }
@@ -211,13 +231,22 @@ namespace DayJobRecord.Services
                             {
                                 Id = Convert.ToInt32(reader["Id"]),
                                 TaskId = Convert.ToInt32(reader["TaskId"]),
-                                Content = reader["Content"]?.ToString() ?? "",
-                                CompleteDate = reader["CompleteDate"]?.ToString() ?? ""
+                                Content = reader["Content"]?.ToString() ?? ""
                             };
                             
                             if (reader["IsReportItem"] != DBNull.Value)
                             {
                                 item.IsReportItem = Convert.ToInt32(reader["IsReportItem"]) == 1;
+                            }
+                            
+                            if (reader["StartDate"] != DBNull.Value && DateTime.TryParse(reader["StartDate"]?.ToString(), out var startDate))
+                            {
+                                item.StartDate = startDate;
+                            }
+                            
+                            if (reader["EndDate"] != DBNull.Value && DateTime.TryParse(reader["EndDate"]?.ToString(), out var endDate))
+                            {
+                                item.EndDate = endDate;
                             }
                             
                             items.Add(item);
@@ -233,12 +262,13 @@ namespace DayJobRecord.Services
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "INSERT INTO TaskItems (TaskId, Content, CompleteDate, IsReportItem) VALUES (@TaskId, @Content, @CompleteDate, @IsReportItem); SELECT last_insert_rowid();";
+                string sql = "INSERT INTO TaskItems (TaskId, Content, StartDate, EndDate, IsReportItem) VALUES (@TaskId, @Content, @StartDate, @EndDate, @IsReportItem); SELECT last_insert_rowid();";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@TaskId", item.TaskId);
                     command.Parameters.AddWithValue("@Content", item.Content ?? "");
-                    command.Parameters.AddWithValue("@CompleteDate", item.CompleteDate ?? "");
+                    command.Parameters.AddWithValue("@StartDate", item.StartDate?.ToString("yyyy-MM-dd") ?? "");
+                    command.Parameters.AddWithValue("@EndDate", item.EndDate?.ToString("yyyy-MM-dd") ?? "");
                     command.Parameters.AddWithValue("@IsReportItem", item.IsReportItem ? 1 : 0);
                     return Convert.ToInt32(command.ExecuteScalar());
                 }
@@ -250,11 +280,12 @@ namespace DayJobRecord.Services
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "UPDATE TaskItems SET Content = @Content, CompleteDate = @CompleteDate, IsReportItem = @IsReportItem WHERE Id = @Id";
+                string sql = "UPDATE TaskItems SET Content = @Content, StartDate = @StartDate, EndDate = @EndDate, IsReportItem = @IsReportItem WHERE Id = @Id";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Content", item.Content ?? "");
-                    command.Parameters.AddWithValue("@CompleteDate", item.CompleteDate ?? "");
+                    command.Parameters.AddWithValue("@StartDate", item.StartDate?.ToString("yyyy-MM-dd") ?? "");
+                    command.Parameters.AddWithValue("@EndDate", item.EndDate?.ToString("yyyy-MM-dd") ?? "");
                     command.Parameters.AddWithValue("@IsReportItem", item.IsReportItem ? 1 : 0);
                     command.Parameters.AddWithValue("@Id", item.Id);
                     command.ExecuteNonQuery();

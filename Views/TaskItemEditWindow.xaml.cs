@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using DayJobRecord.Models;
@@ -15,10 +16,16 @@ namespace DayJobRecord.Views
             set => TaskItem.Content = value;
         }
 
-        public string ItemCompleteDate
+        public DateTime? StartDate
         {
-            get => TaskItem.CompleteDate;
-            set => TaskItem.CompleteDate = value;
+            get => TaskItem.StartDate;
+            set => TaskItem.StartDate = value;
+        }
+
+        public DateTime? EndDate
+        {
+            get => TaskItem.EndDate;
+            set => TaskItem.EndDate = value;
         }
 
         public bool IsReportItem

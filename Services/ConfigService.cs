@@ -10,6 +10,7 @@ namespace DayJobRecord.Services
         public List<TaskTypeOption> TaskTypes { get; set; }
         public List<string> Statuses { get; set; }
         public List<PriorityOption> Priorities { get; set; }
+        public List<string> Projects { get; set; }
     }
 
     public class TaskTypeOption
@@ -63,7 +64,15 @@ namespace DayJobRecord.Services
                 {
                     var json = File.ReadAllText(_configPath);
                     _config = JsonSerializer.Deserialize<DropdownOptionsConfig>(json);
-                    return;
+                    if (_config != null)
+                    {
+                        if (_config.Projects == null)
+                        {
+                            _config.Projects = GetDefaultProjects();
+                            SaveConfig();
+                        }
+                        return;
+                    }
                 }
                 catch
                 {
@@ -85,6 +94,16 @@ namespace DayJobRecord.Services
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(_config, options);
             File.WriteAllText(_configPath, json);
+        }
+
+        private List<string> GetDefaultProjects()
+        {
+            return new List<string>
+            {
+                "内部项目",
+                "项目A",
+                "项目B"
+            };
         }
 
         private DropdownOptionsConfig GetDefaultConfig()
@@ -110,12 +129,14 @@ namespace DayJobRecord.Services
                     new PriorityOption { Value = 1, Display = "较高" },
                     new PriorityOption { Value = 2, Display = "高" },
                     new PriorityOption { Value = 3, Display = "紧急" }
-                }
+                },
+                Projects = GetDefaultProjects()
             };
         }
 
         public List<TaskTypeOption> GetTaskTypes() => _config.TaskTypes;
         public List<string> GetStatuses() => _config.Statuses;
         public List<PriorityOption> GetPriorities() => _config.Priorities;
+        public List<string> GetProjects() => _config.Projects;
     }
 }
