@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         Background="#F5F5F5"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Icon="{x:Null}">
+        Icon="/logo.png">
     <Window.Resources>
         <Style x:Key="TaskCardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
