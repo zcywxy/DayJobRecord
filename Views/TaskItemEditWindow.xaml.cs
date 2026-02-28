@@ -1,5 +1,7 @@
 using System.Windows;
+using System.Windows.Controls;
 using DayJobRecord.Models;
+using MaterialDesignThemes.Wpf;
 
 namespace DayJobRecord.Views
 {
@@ -36,14 +38,41 @@ namespace DayJobRecord.Views
             DataContext = this;
         }
 
-        private void OkButton_Click(object sender, RoutedEventArgs e)
+        private async void OkButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(ItemContent))
             {
-                MessageBox.Show("请输入完成内容", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                await ShowMessageDialog("请输入完成内容");
                 return;
             }
             DialogResult = true;
+        }
+
+        private async System.Threading.Tasks.Task ShowMessageDialog(string message)
+        {
+            var view = new StackPanel
+            {
+                Margin = new Thickness(24),
+                Width = 200
+            };
+            var textBlock = new TextBlock
+            {
+                Text = message,
+                FontSize = 14,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            var button = new Button
+            {
+                Content = "确定",
+                Style = (Style)FindResource("MaterialDesignRaisedButton"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Command = DialogHost.CloseDialogCommand,
+                CommandParameter = true
+            };
+            view.Children.Add(textBlock);
+            view.Children.Add(button);
+            await DialogHost.Show(view, "TaskItemEditDialog");
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

@@ -55,7 +55,8 @@
         </Style>
     </Window.Resources>
     
-    <Grid Margin="16">
+    <materialDesign:DialogHost Identifier="MainDialog">
+        <Grid Margin="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -334,4 +335,5 @@
             </ListBox>
         </Grid>
     </Grid>
+    </materialDesign:DialogHost>
 </Window>

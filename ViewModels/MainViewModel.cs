@@ -2,10 +2,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using DayJobRecord.Models;
 using DayJobRecord.Services;
 using DayJobRecord.Views;
+using MaterialDesignThemes.Wpf;
 
 namespace DayJobRecord.ViewModels
 {
@@ -182,11 +185,11 @@ namespace DayJobRecord.ViewModels
 
         private bool CanDeleteTask() => SelectedTask != null;
 
-        private void DeleteTask()
+        private async void DeleteTask()
         {
             if (SelectedTask == null) return;
             var taskToDelete = SelectedTask;
-            if (MessageBox.Show($"确定要删除任务 \"{taskToDelete.Name}\" 吗？", "确认删除", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (await ShowConfirmDialog($"确定要删除任务 \"{taskToDelete.Name}\" 吗？"))
             {
                 taskToDelete.PropertyChanged -= OnTaskPropertyChanged;
                 _db.DeleteTask(taskToDelete.Id);
@@ -225,10 +228,10 @@ namespace DayJobRecord.ViewModels
 
         private bool CanDeleteTaskItem() => SelectedTaskItem != null;
 
-        private void DeleteTaskItem()
+        private async void DeleteTaskItem()
         {
             if (SelectedTaskItem == null) return;
-            if (MessageBox.Show($"确定要删除该任务细项吗？", "确认删除", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (await ShowConfirmDialog("确定要删除该任务细项吗？"))
             {
                 _db.DeleteTaskItem(SelectedTaskItem.Id);
                 TaskItems.Remove(SelectedTaskItem);
@@ -241,17 +244,89 @@ namespace DayJobRecord.ViewModels
             return Tasks.Any(t => t.IsSelected);
         }
 
-        private void GenerateReport()
+        private async void GenerateReport()
         {
             var selectedTasks = Tasks.Where(t => t.IsSelected).OrderByDescending(t => t.Priority).ToList();
             if (!selectedTasks.Any())
             {
-                MessageBox.Show("请先勾选要生成日报的任务", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                await ShowMessageDialog("请先勾选要生成日报的任务");
                 return;
             }
 
             var reportWindow = new DailyReportWindow(selectedTasks, _db);
             reportWindow.ShowDialog();
+        }
+
+        private async Task<bool> ShowConfirmDialog(string message)
+        {
+            var view = new StackPanel
+            {
+                Margin = new Thickness(24),
+                Width = 260
+            };
+            var textBlock = new TextBlock
+            {
+                Text = message,
+                FontSize = 14,
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 20)
+            };
+            var buttonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            var cancelButton = new Button
+            {
+                Content = "取消",
+                Style = Application.Current.FindResource("MaterialDesignOutlinedButton") as Style,
+                Width = 70,
+                Margin = new Thickness(0, 0, 12, 0),
+                Command = DialogHost.CloseDialogCommand,
+                CommandParameter = false
+            };
+            var confirmButton = new Button
+            {
+                Content = "确定",
+                Style = Application.Current.FindResource("MaterialDesignRaisedButton") as Style,
+                Width = 70,
+                Command = DialogHost.CloseDialogCommand,
+                CommandParameter = true
+            };
+            buttonPanel.Children.Add(cancelButton);
+            buttonPanel.Children.Add(confirmButton);
+            view.Children.Add(textBlock);
+            view.Children.Add(buttonPanel);
+            var result = await DialogHost.Show(view, "MainDialog");
+            return result is bool b && b;
+        }
+
+        private async Task ShowMessageDialog(string message)
+        {
+            var view = new StackPanel
+            {
+                Margin = new Thickness(24),
+                Width = 200
+            };
+            var textBlock = new TextBlock
+            {
+                Text = message,
+                FontSize = 14,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            var button = new Button
+            {
+                Content = "确定",
+                Style = Application.Current.FindResource("MaterialDesignRaisedButton") as Style,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Command = DialogHost.CloseDialogCommand,
+                CommandParameter = true
+            };
+            view.Children.Add(textBlock);
+            view.Children.Add(button);
+            await DialogHost.Show(view, "MainDialog");
         }
 
         private void SortTasks()
