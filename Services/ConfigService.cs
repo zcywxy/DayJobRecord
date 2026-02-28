@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace DayJobRecord.Services
@@ -91,7 +92,11 @@ namespace DayJobRecord.Services
                 Directory.CreateDirectory(directory);
             }
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions 
+            { 
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
             var json = JsonSerializer.Serialize(_config, options);
             File.WriteAllText(_configPath, json);
         }
