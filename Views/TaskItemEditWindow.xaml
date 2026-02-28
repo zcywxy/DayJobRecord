@@ -59,11 +59,13 @@
                                         materialDesign:HintAssist.Hint="开始时间"
                                         materialDesign:HintAssist.IsFloating="True"
                                         SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}"
+                                        Language="zh-CN"
                                         Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
                             <DatePicker Grid.Column="2"
                                         materialDesign:HintAssist.Hint="结束时间"
                                         materialDesign:HintAssist.IsFloating="True"
                                         SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}"
+                                        Language="zh-CN"
                                         Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
                         </Grid>
 
