@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using DayJobRecord.Models;
 using DayJobRecord.Services;
+using MaterialDesignThemes.Wpf;
 
 namespace DayJobRecord.Views
 {
@@ -81,10 +83,33 @@ namespace DayJobRecord.Views
             return sb.ToString();
         }
 
-        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(ReportText);
-            MessageBox.Show("日报已复制到剪贴板", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            var view = new StackPanel
+            {
+                Margin = new Thickness(24),
+                Width = 200
+            };
+            var textBlock = new TextBlock
+            {
+                Text = "日报已复制到剪贴板",
+                FontSize = 14,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            var button = new Button
+            {
+                Content = "确定",
+                Style = (Style)FindResource("MaterialDesignRaisedButton"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Command = DialogHost.CloseDialogCommand,
+                CommandParameter = true
+            };
+            view.Children.Add(textBlock);
+            view.Children.Add(button);
+            await DialogHost.Show(view, "RootDialog");
+            Close();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

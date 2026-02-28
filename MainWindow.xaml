@@ -79,31 +79,21 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Button ToolTip="新增任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                Command="{Binding AddTaskCommand}" Margin="0,0,6,0">
-                            <materialDesign:PackIcon Kind="Plus" Width="18" Height="18"/>
-                        </Button>
-                        <Button ToolTip="修改任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                Command="{Binding EditTaskCommand}" Margin="0,0,6,0">
-                            <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
-                        </Button>
-                        <Button ToolTip="删除任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                Command="{Binding DeleteTaskCommand}"
-                                Background="#ef5350" BorderBrush="#ef5350">
-                            <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
-                        </Button>
-                    </StackPanel>
+                    <Button Grid.Column="0" ToolTip="新增任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            Command="{Binding AddTaskCommand}" HorizontalAlignment="Left">
+                        <materialDesign:PackIcon Kind="Plus" Width="18" Height="18"/>
+                    </Button>
                     
                     <CheckBox Grid.Column="1" Content="显示所有任务" 
                               IsChecked="{Binding ShowAllTasks, Mode=TwoWay}"
                               Style="{StaticResource MaterialDesignCheckBox}"
-                              VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                              VerticalAlignment="Center" HorizontalAlignment="Right"
+                              Margin="0,0,16,0"/>
                     
                     <Button Grid.Column="2" ToolTip="生成日报" 
                             Style="{StaticResource MaterialDesignRaisedButton}"
                             Command="{Binding GenerateReportCommand}"
-                            Height="32" Padding="12,0">
+                            Height="32" Padding="12,0" HorizontalAlignment="Right">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="FileDocumentOutline" Width="16" Height="16" VerticalAlignment="Center"/>
                             <TextBlock Text="生成日报" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="13"/>
@@ -170,6 +160,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             
                             <CheckBox Grid.Row="0" Grid.Column="0" 
@@ -192,6 +183,20 @@
                                                FontSize="10"
                                                Foreground="#1976D2"/>
                                 </Border>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="8,0,0,0">
+                                <Button ToolTip="修改任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                        Command="{Binding DataContext.EditTaskCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        Width="24" Height="24">
+                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
+                                </Button>
+                                <Button ToolTip="删除任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                        Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        Background="#ef5350" BorderBrush="#ef5350"
+                                        Width="24" Height="24" Margin="4,0,0,0">
+                                    <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                </Button>
                             </StackPanel>
                             
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
@@ -226,21 +231,12 @@
             <TextBlock Grid.Row="0" Text="任务细项" Style="{StaticResource SectionHeaderStyle}"/>
 
             <Border Grid.Row="1" Style="{StaticResource ToolBarStyle}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Grid>
                     <Button ToolTip="新增细项" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                            Command="{Binding AddTaskItemCommand}" Margin="0,0,6,0">
+                            Command="{Binding AddTaskItemCommand}" HorizontalAlignment="Left">
                         <materialDesign:PackIcon Kind="Plus" Width="18" Height="18"/>
                     </Button>
-                    <Button ToolTip="修改细项" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                            Command="{Binding EditTaskItemCommand}" Margin="0,0,6,0">
-                        <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
-                    </Button>
-                    <Button ToolTip="删除细项" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                            Command="{Binding DeleteTaskItemCommand}"
-                            Background="#ef5350" BorderBrush="#ef5350">
-                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
-                    </Button>
-                </StackPanel>
+                </Grid>
             </Border>
 
             <ListBox Grid.Row="2" ItemsSource="{Binding TaskItems}"
@@ -295,8 +291,12 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
                             
-                            <TextBlock Grid.Row="0" Text="{Binding Content}" 
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Content}" 
                                        TextWrapping="Wrap"
                                        FontWeight="Medium"
                                        FontSize="13"
@@ -305,7 +305,21 @@
                                        HorizontalAlignment="Left"
                                        MaxWidth="400"/>
                             
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
+                                <Button ToolTip="修改细项" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                        Command="{Binding DataContext.EditTaskItemCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        Width="24" Height="24">
+                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
+                                </Button>
+                                <Button ToolTip="删除细项" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                        Command="{Binding DataContext.DeleteTaskItemCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        Background="#ef5350" BorderBrush="#ef5350"
+                                        Width="24" Height="24" Margin="4,0,0,0">
+                                    <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                </Button>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,6,0,0">
                                 <TextBlock Text="完成时间：" Foreground="#9E9E9E" FontSize="11"/>
                                 <TextBlock Text="{Binding CompleteDate}"
                                            Foreground="#616161" FontSize="11" Margin="0,0,16,0"/>
