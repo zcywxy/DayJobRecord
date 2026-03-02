@@ -9,18 +9,28 @@ using MaterialDesignThemes.Wpf;
 
 namespace DayJobRecord.Views
 {
+    public enum ReportType
+    {
+        DailyReport,
+        PerformanceSummary
+    }
+
     public partial class DailyReportWindow : Window
     {
         public string ReportText { get; private set; }
+        public string WindowTitle { get; private set; }
 
-        public DailyReportWindow(List<TaskModel> selectedTasks, DatabaseService db)
+        public DailyReportWindow(List<TaskModel> selectedTasks, DatabaseService db, ReportType reportType = ReportType.DailyReport)
         {
             InitializeComponent();
-            ReportText = GenerateReport(selectedTasks, db);
+            WindowTitle = reportType == ReportType.DailyReport ? "日报预览" : "绩效总结预览";
+            ReportText = reportType == ReportType.DailyReport 
+                ? GenerateDailyReport(selectedTasks, db) 
+                : GeneratePerformanceSummary(selectedTasks, db);
             DataContext = this;
         }
 
-        private string GenerateReport(List<TaskModel> tasks, DatabaseService db)
+        private string GenerateDailyReport(List<TaskModel> tasks, DatabaseService db)
         {
             var sb = new StringBuilder();
             sb.AppendLine();
@@ -85,6 +95,43 @@ namespace DayJobRecord.Views
             return sb.ToString();
         }
 
+        private string GeneratePerformanceSummary(List<TaskModel> tasks, DatabaseService db)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine();
+
+            var tasksByProject = tasks.GroupBy(t => t.Project ?? "").OrderBy(g => g.Key);
+
+            foreach (var projectGroup in tasksByProject)
+            {
+                var projectName = string.IsNullOrEmpty(projectGroup.Key) ? "其他" : projectGroup.Key;
+                sb.AppendLine($"本月完成了{projectName}的如下任务：");
+                
+                int taskIndex = 1;
+                foreach (var task in projectGroup)
+                {
+                    sb.AppendLine($"{taskIndex}、{task.Name}");
+                    
+                    var items = db.GetTaskItemsByTaskId(task.Id);
+                    var reportItems = items.Where(i => i.IsReportItem).ToList();
+                    
+                    if (reportItems.Any())
+                    {
+                        int itemIndex = 1;
+                        foreach (var item in reportItems)
+                        {
+                            sb.AppendLine($"\t{itemIndex}) {item.Content}；");
+                            itemIndex++;
+                        }
+                    }
+                    taskIndex++;
+                }
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
         private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(ReportText);
@@ -95,7 +142,7 @@ namespace DayJobRecord.Views
             };
             var textBlock = new TextBlock
             {
-                Text = "日报已复制到剪贴板",
+                Text = "内容已复制到剪贴板",
                 FontSize = 14,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 16)

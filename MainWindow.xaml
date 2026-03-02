@@ -67,10 +67,19 @@
                     <Button ToolTip="生成日报" 
                             Style="{StaticResource MaterialDesignRaisedButton}"
                             Command="{Binding GenerateReportCommand}"
-                            Height="32" Padding="12,0">
+                            Height="32" Padding="12,0" Margin="0,0,12,0">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="FileDocumentOutline" Width="16" Height="16" VerticalAlignment="Center"/>
                             <TextBlock Text="生成日报" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="生成绩效总结" 
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Command="{Binding GeneratePerformanceSummaryCommand}"
+                            Height="32" Padding="12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ChartBoxOutline" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="生成绩效总结" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="13"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

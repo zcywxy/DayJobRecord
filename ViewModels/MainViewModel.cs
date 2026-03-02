@@ -110,6 +110,7 @@ namespace DayJobRecord.ViewModels
         public RelayCommand EditTaskItemCommand { get; }
         public RelayCommand DeleteTaskItemCommand { get; }
         public RelayCommand GenerateReportCommand { get; }
+        public RelayCommand GeneratePerformanceSummaryCommand { get; }
 
         public MainViewModel()
         {
@@ -135,6 +136,7 @@ namespace DayJobRecord.ViewModels
             EditTaskItemCommand = new RelayCommand(EditTaskItem, CanEditTaskItem);
             DeleteTaskItemCommand = new RelayCommand(DeleteTaskItem, CanDeleteTaskItem);
             GenerateReportCommand = new RelayCommand(GenerateReport, CanGenerateReport);
+            GeneratePerformanceSummaryCommand = new RelayCommand(GeneratePerformanceSummary, CanGenerateReport);
 
             LoadTasks();
         }
@@ -144,6 +146,7 @@ namespace DayJobRecord.ViewModels
             if (e.PropertyName == nameof(TaskModel.IsSelected))
             {
                 GenerateReportCommand.RaiseCanExecuteChanged();
+                GeneratePerformanceSummaryCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -171,6 +174,7 @@ namespace DayJobRecord.ViewModels
             }
             FilterTasks();
             GenerateReportCommand.RaiseCanExecuteChanged();
+            GeneratePerformanceSummaryCommand.RaiseCanExecuteChanged();
         }
 
         private void FilterTasks()
@@ -242,6 +246,7 @@ namespace DayJobRecord.ViewModels
                 TaskItems.Clear();
                 SelectedTask = null;
                 GenerateReportCommand.RaiseCanExecuteChanged();
+                GeneratePerformanceSummaryCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -298,7 +303,20 @@ namespace DayJobRecord.ViewModels
                 return;
             }
 
-            var reportWindow = new DailyReportWindow(selectedTasks, _db);
+            var reportWindow = new DailyReportWindow(selectedTasks, _db, ReportType.DailyReport);
+            reportWindow.ShowDialog();
+        }
+
+        private async void GeneratePerformanceSummary()
+        {
+            var selectedTasks = Tasks.Where(t => t.IsSelected).OrderByDescending(t => t.Priority).ToList();
+            if (!selectedTasks.Any())
+            {
+                await ShowMessageDialog("请先勾选要生成绩效总结的任务");
+                return;
+            }
+
+            var reportWindow = new DailyReportWindow(selectedTasks, _db, ReportType.PerformanceSummary);
             reportWindow.ShowDialog();
         }
 
