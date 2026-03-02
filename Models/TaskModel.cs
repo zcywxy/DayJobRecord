@@ -32,7 +32,7 @@ namespace DayJobRecord.Models
         public int TaskType
         {
             get => _taskType;
-            set { _taskType = value; OnPropertyChanged(nameof(TaskType)); OnPropertyChanged(nameof(TaskTypeDisplay)); }
+            set { _taskType = value; OnPropertyChanged(nameof(TaskType)); OnPropertyChanged(nameof(TaskTypeDisplay)); OnPropertyChanged(nameof(TaskTypeColor)); }
         }
 
         public string TaskTypeDisplay
@@ -42,6 +42,16 @@ namespace DayJobRecord.Models
                 var taskTypes = ConfigService.Instance.GetTaskTypes();
                 var option = taskTypes.Find(t => t.Value == TaskType);
                 return option?.Display ?? TaskType.ToString();
+            }
+        }
+
+        public string TaskTypeColor
+        {
+            get
+            {
+                var taskTypes = ConfigService.Instance.GetTaskTypes();
+                var option = taskTypes.Find(t => t.Value == TaskType);
+                return option?.Color ?? "#E3F2FD";
             }
         }
 

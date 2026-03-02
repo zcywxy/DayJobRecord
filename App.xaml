@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.LightBlue.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:BoolToStringConverter x:Key="BoolToStringConverter"/>
+            <local:StringToBrushConverter x:Key="StringToBrushConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

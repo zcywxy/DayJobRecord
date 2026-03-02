@@ -214,14 +214,14 @@
                                                    FontWeight="Medium"
                                                    FontSize="13"
                                                    VerticalAlignment="Center"/>
-                                        <Border Background="#E3F2FD" 
+                                        <Border Background="{Binding TaskTypeColor, Converter={StaticResource StringToBrushConverter}}" 
                                                 CornerRadius="3" 
                                                 Padding="6,1" 
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center">
                                             <TextBlock Text="{Binding TaskTypeDisplay}" 
                                                        FontSize="10"
-                                                       Foreground="#1976D2"/>
+                                                       Foreground="#424242"/>
                                         </Border>
                                     </StackPanel>
                                     

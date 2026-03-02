@@ -18,6 +18,7 @@ namespace DayJobRecord.Services
     {
         public int Value { get; set; }
         public string Display { get; set; }
+        public string Color { get; set; }
     }
 
     public class PriorityOption
@@ -117,8 +118,8 @@ namespace DayJobRecord.Services
             {
                 TaskTypes = new List<TaskTypeOption>
                 {
-                    new TaskTypeOption { Value = 0, Display = "开发任务" },
-                    new TaskTypeOption { Value = 1, Display = "问题处理" }
+                    new TaskTypeOption { Value = 0, Display = "开发任务", Color = "#E3F2FD" },
+                    new TaskTypeOption { Value = 1, Display = "问题处理", Color = "#FFF3E0" }
                 },
                 Statuses = new List<string>
                 {
