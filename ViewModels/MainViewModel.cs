@@ -15,11 +15,14 @@ namespace DayJobRecord.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly DatabaseService _db;
+        private readonly ConfigService _config = ConfigService.Instance;
         private ObservableCollection<TaskModel> _tasks;
         private ObservableCollection<TaskItemModel> _taskItems;
         private TaskModel _selectedTask;
         private TaskItemModel _selectedTaskItem;
-        private bool _showAllTasks = true;
+        private string _filterStatus = "";
+        private string _filterName = "";
+        private string _filterProject = "";
 
         public ObservableCollection<TaskModel> Tasks
         {
@@ -64,13 +67,38 @@ namespace DayJobRecord.ViewModels
             }
         }
 
-        public bool ShowAllTasks
+        public ObservableCollection<string> Statuses { get; }
+        public ObservableCollection<string> Projects { get; }
+
+        public string FilterStatus
         {
-            get => _showAllTasks;
+            get => _filterStatus;
             set
             {
-                _showAllTasks = value;
-                OnPropertyChanged(nameof(ShowAllTasks));
+                _filterStatus = value ?? "";
+                OnPropertyChanged(nameof(FilterStatus));
+                FilterTasks();
+            }
+        }
+
+        public string FilterName
+        {
+            get => _filterName;
+            set
+            {
+                _filterName = value ?? "";
+                OnPropertyChanged(nameof(FilterName));
+                FilterTasks();
+            }
+        }
+
+        public string FilterProject
+        {
+            get => _filterProject;
+            set
+            {
+                _filterProject = value ?? "";
+                OnPropertyChanged(nameof(FilterProject));
                 FilterTasks();
             }
         }
@@ -88,6 +116,17 @@ namespace DayJobRecord.ViewModels
             _db = DatabaseService.Instance;
             Tasks = new ObservableCollection<TaskModel>();
             TaskItems = new ObservableCollection<TaskItemModel>();
+            Statuses = new ObservableCollection<string> { "" };
+            foreach (var status in _config.GetStatuses())
+            {
+                Statuses.Add(status);
+            }
+
+            Projects = new ObservableCollection<string> { "" };
+            foreach (var project in _config.GetProjects())
+            {
+                Projects.Add(project);
+            }
 
             AddTaskCommand = new RelayCommand(AddTask);
             EditTaskCommand = new RelayCommand(EditTask, CanEditTask);
@@ -138,7 +177,11 @@ namespace DayJobRecord.ViewModels
         {
             foreach (var task in Tasks)
             {
-                task.IsVisible = ShowAllTasks || task.IsShow;
+                var isVisibleByStatus = string.IsNullOrEmpty(FilterStatus) || task.Status == FilterStatus;
+                var isVisibleByProject = string.IsNullOrEmpty(FilterProject) || task.Project == FilterProject;
+                var isVisibleByName = string.IsNullOrEmpty(FilterName) || 
+                    (task.Name?.Contains(FilterName) ?? false);
+                task.IsVisible = isVisibleByStatus && isVisibleByProject && isVisibleByName;
             }
         }
 
