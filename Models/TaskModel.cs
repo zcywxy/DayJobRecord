@@ -8,7 +8,7 @@ namespace DayJobRecord.Models
     {
         private int _id;
         private string _name;
-        private TaskType _taskType;
+        private int _taskType;
         private string _status;
         private int _priority;
         private bool _isVisible = true;
@@ -29,13 +29,21 @@ namespace DayJobRecord.Models
             set { _name = value; OnPropertyChanged(nameof(Name)); }
         }
 
-        public TaskType TaskType
+        public int TaskType
         {
             get => _taskType;
             set { _taskType = value; OnPropertyChanged(nameof(TaskType)); OnPropertyChanged(nameof(TaskTypeDisplay)); }
         }
 
-        public string TaskTypeDisplay => TaskType == TaskType.Development ? "开发任务" : "问题处理";
+        public string TaskTypeDisplay
+        {
+            get
+            {
+                var taskTypes = ConfigService.Instance.GetTaskTypes();
+                var option = taskTypes.Find(t => t.Value == TaskType);
+                return option?.Display ?? TaskType.ToString();
+            }
+        }
 
         public string Status
         {

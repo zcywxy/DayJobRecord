@@ -35,14 +35,17 @@ namespace DayJobRecord.Views
             var sb = new StringBuilder();
             sb.AppendLine();
 
-            var devTasks = tasks.Where(t => t.TaskType == TaskType.Development).ToList();
-            var issueTasks = tasks.Where(t => t.TaskType == TaskType.Issue).ToList();
+            var config = ConfigService.Instance;
+            var taskTypes = config.GetTaskTypes();
 
-            if (devTasks.Any())
+            foreach (var taskType in taskTypes)
             {
-                sb.AppendLine("开发任务：");
+                var tasksOfType = tasks.Where(t => t.TaskType == taskType.Value).ToList();
+                if (!tasksOfType.Any()) continue;
+
+                sb.AppendLine($"{taskType.Display}：");
                 int index = 1;
-                foreach (var task in devTasks)
+                foreach (var task in tasksOfType)
                 {
                     sb.AppendLine($"{index}、{task.Name}");
                     sb.AppendLine($"\t状态：{task.Status}");
@@ -55,33 +58,6 @@ namespace DayJobRecord.Views
                         if (!string.IsNullOrEmpty(dateStr))
                         {
                             sb.AppendLine($"\t{dateStr}：{item.Content}");
-                        }
-                        else
-                        {
-                            sb.AppendLine($"\t{item.Content}");
-                        }
-                    }
-                    index++;
-                }
-            }
-
-            if (issueTasks.Any())
-            {
-                sb.AppendLine("问题处理：");
-                int index = 1;
-                foreach (var task in issueTasks)
-                {
-                    sb.AppendLine($"{index}、{task.Name}");
-                    sb.AppendLine($"\t状态：{task.Status}");
-
-                    var items = db.GetTaskItemsByTaskId(task.Id);
-                    var reportItems = items.Where(i => i.IsReportItem).ToList();
-                    foreach (var item in reportItems)
-                    {
-                        var dateStr = item.EndDate?.ToString("MM-dd") ?? "";
-                        if (!string.IsNullOrEmpty(dateStr))
-                        {
-                            sb.AppendLine($"\t{dateStr}处理：{item.Content}");
                         }
                         else
                         {

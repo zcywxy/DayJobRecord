@@ -32,8 +32,8 @@ namespace DayJobRecord.Views
 
         public int TaskType
         {
-            get => (int)Task.TaskType;
-            set => Task.TaskType = (TaskType)value;
+            get => Task.TaskType;
+            set => Task.TaskType = value;
         }
 
         public string Status

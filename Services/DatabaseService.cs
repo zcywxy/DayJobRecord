@@ -127,7 +127,7 @@ namespace DayJobRecord.Services
                         {
                             Id = Convert.ToInt32(reader["Id"]),
                             Name = reader["Name"].ToString(),
-                            TaskType = (TaskType)Convert.ToInt32(reader["TaskType"]),
+                            TaskType = Convert.ToInt32(reader["TaskType"]),
                             Status = reader["Status"]?.ToString() ?? "",
                             Priority = Convert.ToInt32(reader["Priority"]),
                             IsShow = Convert.ToInt32(reader["IsShow"]) == 1
@@ -160,7 +160,7 @@ namespace DayJobRecord.Services
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Name", task.Name);
-                    command.Parameters.AddWithValue("@TaskType", (int)task.TaskType);
+                    command.Parameters.AddWithValue("@TaskType", task.TaskType);
                     command.Parameters.AddWithValue("@Status", task.Status ?? "");
                     command.Parameters.AddWithValue("@Priority", task.Priority);
                     command.Parameters.AddWithValue("@IsShow", task.IsShow ? 1 : 0);
@@ -180,7 +180,7 @@ namespace DayJobRecord.Services
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Name", task.Name);
-                    command.Parameters.AddWithValue("@TaskType", (int)task.TaskType);
+                    command.Parameters.AddWithValue("@TaskType", task.TaskType);
                     command.Parameters.AddWithValue("@Status", task.Status ?? "");
                     command.Parameters.AddWithValue("@Priority", task.Priority);
                     command.Parameters.AddWithValue("@IsShow", task.IsShow ? 1 : 0);

@@ -111,6 +111,7 @@ namespace DayJobRecord.ViewModels
         public RelayCommand DeleteTaskItemCommand { get; }
         public RelayCommand GenerateReportCommand { get; }
         public RelayCommand GeneratePerformanceSummaryCommand { get; }
+        public RelayCommand InvertSelectionCommand { get; }
 
         public MainViewModel()
         {
@@ -137,6 +138,7 @@ namespace DayJobRecord.ViewModels
             DeleteTaskItemCommand = new RelayCommand(DeleteTaskItem, CanDeleteTaskItem);
             GenerateReportCommand = new RelayCommand(GenerateReport, CanGenerateReport);
             GeneratePerformanceSummaryCommand = new RelayCommand(GeneratePerformanceSummary, CanGenerateReport);
+            InvertSelectionCommand = new RelayCommand(InvertSelection);
 
             LoadTasks();
         }
@@ -251,6 +253,21 @@ namespace DayJobRecord.ViewModels
         }
 
         private bool CanAddTaskItem() => SelectedTask != null;
+
+        private void InvertSelection()
+        {
+            foreach (var task in Tasks)
+            {
+                if (task.IsVisible)
+                {
+                    task.IsSelected = !task.IsSelected;
+                }
+                else
+                {
+                    task.IsSelected = false;
+                }
+            }
+        }
 
         private void AddTaskItem()
         {
