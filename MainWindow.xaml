@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:DayJobRecord"
         mc:Ignorable="d"
-        Title="工作日报记录" Height="650" Width="1100"
+        Title="工作日报记录" Height="800" Width="1300"
         WindowStartupLocation="CenterScreen"
         Background="#F5F5F5"
         FontFamily="{DynamicResource MaterialDesignFont}"
@@ -50,8 +50,8 @@
         <Style x:Key="ToolBarStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
     </Window.Resources>
     
@@ -82,7 +82,25 @@
                             <TextBlock Text="生成绩效总结" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="13"/>
                         </StackPanel>
                     </Button>
-                    <Separator Width="1" Background="#E0E0E0" Margin="0,4,24,4" />
+                    <Separator Width="1" Background="#E0E0E0" Margin="0,4,16,4" />
+                    <Button ToolTip="新增任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            Command="{Binding AddTaskCommand}" Width="28" Height="28" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="Plus" Width="18" Height="18"/>
+                    </Button>
+                    <Button ToolTip="反选" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            Command="{Binding InvertSelectionCommand}" Width="28" Height="28" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="CheckAll" Width="18" Height="18"/>
+                    </Button>
+                    <Button ToolTip="取消选中" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            Command="{Binding ClearSelectionCommand}" Width="28" Height="28" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="CheckboxBlankOutline" Width="18" Height="18"/>
+                    </Button>
+                    <ComboBox materialDesign:HintAssist.Hint="显示状态"
+                              ItemsSource="{Binding ShowStatusOptions}"
+                              SelectedItem="{Binding SelectedShowStatusOption, Mode=TwoWay}"
+                              DisplayMemberPath="Display"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              Width="120" Margin="0,0,12,0" VerticalAlignment="Center"/>
                     <ComboBox 
                               materialDesign:HintAssist.Hint="项目筛选"
                               ItemsSource="{Binding Projects}"
@@ -105,62 +123,22 @@
                 </StackPanel>
             </Border>
             
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <Grid Grid.Row="1" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="0" Margin="0,0,0,8">
+                <Grid Grid.Column="0" Margin="0,0,8,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Text="任务列表" Style="{StaticResource SectionHeaderStyle}"/>
 
-                    <Border Grid.Row="1" Style="{StaticResource ToolBarStyle}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <Button Grid.Column="0" ToolTip="新增任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                    Command="{Binding AddTaskCommand}" HorizontalAlignment="Left" Margin="0,0,8,0" Width="20" Height="20">
-                                <materialDesign:PackIcon Kind="Plus" Width="18" Height="18"/>
-                            </Button>
-                            
-                            <Button Grid.Column="1" ToolTip="反选" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                    Command="{Binding InvertSelectionCommand}" HorizontalAlignment="Left" Margin="0,0,8,0" Width="20" Height="20">
-                                <materialDesign:PackIcon Kind="CheckAll" Width="18" Height="18"/>
-                            </Button>
-                            
-                            <Button Grid.Column="2" ToolTip="取消选中" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                    Command="{Binding ClearSelectionCommand}" HorizontalAlignment="Left" Margin="0,0,8,0" Width="20" Height="20">
-                                <materialDesign:PackIcon Kind="CheckboxBlankOutline" Width="18" Height="18"/>
-                            </Button>
-                            
-                            <ComboBox Grid.Column="3" ToolTip="选择任务显示状态" 
-                                      ItemsSource="{Binding ShowStatusOptions}"
-                                      SelectedItem="{Binding SelectedShowStatusOption, Mode=TwoWay}"
-                                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                      Width="110" Margin="0,0,12,0">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Display}" FontSize="14" VerticalAlignment="Center" Padding="4,2"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </Grid>
-                    </Border>
-
-                    <ListBox Grid.Row="2" ItemsSource="{Binding Tasks}"
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Tasks}"
                              SelectedItem="{Binding SelectedTask}"
                              Style="{StaticResource MaterialDesignListBox}"
                              Background="Transparent"
@@ -280,10 +258,10 @@
                     </ListBox>
                 </Grid>
 
-                <GridSplitter Grid.Row="1" Height="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" 
-                              Background="#E0E0E0" Margin="0,8"/>
+                <GridSplitter Grid.Column="1" Width="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
+                              Background="#E0E0E0" Margin="8,0"/>
 
-                <Grid Grid.Row="2" Margin="0,8,0,0">
+                <Grid Grid.Column="2" Margin="8,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -301,7 +279,7 @@
                         </Grid>
                     </Border>
 
-                    <ListBox Grid.Row="2" ItemsSource="{Binding TaskItems}"
+                    <ListBox Grid.Row="1" ItemsSource="{Binding TaskItems}"
                              SelectedItem="{Binding SelectedTaskItem}"
                              Style="{StaticResource MaterialDesignListBox}"
                              Background="Transparent"
