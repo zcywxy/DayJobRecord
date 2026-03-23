@@ -23,6 +23,50 @@ namespace DayJobRecord.ViewModels
         private string _filterStatus = "";
         private string _filterName = "";
         private string _filterProject = "";
+        private ShowStatus _selectedShowStatus = ShowStatus.All;
+
+        public enum ShowStatus
+        {
+            All,
+            ShowOnly,
+            HideOnly
+        }
+
+        public class ShowStatusOption
+        {
+            public ShowStatus Value { get; set; }
+            public string Display { get; set; }
+            public string Icon { get; set; }
+        }
+
+        public ObservableCollection<ShowStatusOption> ShowStatusOptions { get; }
+
+        public ShowStatusOption SelectedShowStatusOption
+        {
+            get => ShowStatusOptions.FirstOrDefault(o => o.Value == _selectedShowStatus);
+            set
+            {
+                if (value != null && value.Value != _selectedShowStatus)
+                {
+                    _selectedShowStatus = value.Value;
+                    OnPropertyChanged(nameof(SelectedShowStatusOption));
+                    OnPropertyChanged(nameof(SelectedShowStatus));
+                    FilterTasks();
+                }
+            }
+        }
+
+        public ShowStatus SelectedShowStatus
+        {
+            get => _selectedShowStatus;
+            set
+            {
+                _selectedShowStatus = value;
+                OnPropertyChanged(nameof(SelectedShowStatus));
+                OnPropertyChanged(nameof(SelectedShowStatusOption));
+                FilterTasks();
+            }
+        }
 
         public ObservableCollection<TaskModel> Tasks
         {
@@ -112,6 +156,8 @@ namespace DayJobRecord.ViewModels
         public RelayCommand GenerateReportCommand { get; }
         public RelayCommand GeneratePerformanceSummaryCommand { get; }
         public RelayCommand InvertSelectionCommand { get; }
+        public RelayCommand ClearSelectionCommand { get; }
+        public RelayCommand<TaskModel> ToggleShowCommand { get; }
 
         public MainViewModel()
         {
@@ -130,6 +176,14 @@ namespace DayJobRecord.ViewModels
                 Projects.Add(project);
             }
 
+            ShowStatusOptions = new ObservableCollection<ShowStatusOption>
+            {
+                new ShowStatusOption { Value = ShowStatus.All, Display = "全显示", Icon = "Eye" },
+                new ShowStatusOption { Value = ShowStatus.ShowOnly, Display = "显示", Icon = "Visibility" },
+                new ShowStatusOption { Value = ShowStatus.HideOnly, Display = "不显示", Icon = "VisibilityOff" }
+            };
+            _selectedShowStatus = ShowStatus.All;
+
             AddTaskCommand = new RelayCommand(AddTask);
             EditTaskCommand = new RelayCommand(EditTask, CanEditTask);
             DeleteTaskCommand = new RelayCommand(DeleteTask, CanDeleteTask);
@@ -139,6 +193,8 @@ namespace DayJobRecord.ViewModels
             GenerateReportCommand = new RelayCommand(GenerateReport, CanGenerateReport);
             GeneratePerformanceSummaryCommand = new RelayCommand(GeneratePerformanceSummary, CanGenerateReport);
             InvertSelectionCommand = new RelayCommand(InvertSelection);
+            ClearSelectionCommand = new RelayCommand(ClearSelection);
+            ToggleShowCommand = new RelayCommand<TaskModel>(ToggleShow);
 
             LoadTasks();
         }
@@ -187,7 +243,22 @@ namespace DayJobRecord.ViewModels
                 var isVisibleByProject = string.IsNullOrEmpty(FilterProject) || task.Project == FilterProject;
                 var isVisibleByName = string.IsNullOrEmpty(FilterName) || 
                     (task.Name?.Contains(FilterName) ?? false);
-                task.IsVisible = isVisibleByStatus && isVisibleByProject && isVisibleByName;
+                
+                bool isVisibleByShowStatus;
+                switch (SelectedShowStatus)
+                {
+                    case ShowStatus.ShowOnly:
+                        isVisibleByShowStatus = task.IsShow;
+                        break;
+                    case ShowStatus.HideOnly:
+                        isVisibleByShowStatus = !task.IsShow;
+                        break;
+                    default:
+                        isVisibleByShowStatus = true;
+                        break;
+                }
+                
+                task.IsVisible = isVisibleByStatus && isVisibleByProject && isVisibleByName && isVisibleByShowStatus;
             }
         }
 
@@ -266,6 +337,23 @@ namespace DayJobRecord.ViewModels
                 {
                     task.IsSelected = false;
                 }
+            }
+        }
+
+        private void ClearSelection()
+        {
+            foreach (var task in Tasks)
+            {
+                task.IsSelected = false;
+            }
+        }
+
+        private void ToggleShow(TaskModel task)
+        {
+            if (task != null)
+            {
+                task.IsShow = !task.IsShow;
+                _db.UpdateTask(task);
             }
         }
 
@@ -446,6 +534,35 @@ namespace DayJobRecord.ViewModels
             if (CanExecute(parameter))
             {
                 _execute();
+            }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public class RelayCommand<T> : System.Windows.Input.ICommand
+    {
+        private readonly Action<T> _execute;
+        private readonly Func<T, bool> _canExecute;
+
+        public event EventHandler CanExecuteChanged;
+
+        public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
+        {
+            _execute = execute;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute((T)parameter);
+
+        public void Execute(object parameter)
+        {
+            if (CanExecute(parameter))
+            {
+                _execute((T)parameter);
             }
         }
 

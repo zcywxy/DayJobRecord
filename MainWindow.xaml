@@ -76,12 +76,32 @@
                     <Button ToolTip="生成绩效总结" 
                             Style="{StaticResource MaterialDesignRaisedButton}"
                             Command="{Binding GeneratePerformanceSummaryCommand}"
-                            Height="32" Padding="12,0">
+                            Height="32" Padding="12,0" Margin="0,0,24,0">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ChartBoxOutline" Width="16" Height="16" VerticalAlignment="Center"/>
                             <TextBlock Text="生成绩效总结" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="13"/>
                         </StackPanel>
                     </Button>
+                    <Separator Width="1" Background="#E0E0E0" Margin="0,4,24,4" />
+                    <ComboBox 
+                              materialDesign:HintAssist.Hint="项目筛选"
+                              ItemsSource="{Binding Projects}"
+                              SelectedItem="{Binding FilterProject, Mode=TwoWay}"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              Width="120" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            
+                    <ComboBox 
+                              materialDesign:HintAssist.Hint="状态筛选"
+                              ItemsSource="{Binding Statuses}"
+                              SelectedItem="{Binding FilterStatus, Mode=TwoWay}"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              Width="120" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            
+                    <TextBox 
+                             materialDesign:HintAssist.Hint="名称筛选"
+                             Text="{Binding FilterName, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Width="200" Margin="0,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
             
@@ -121,24 +141,24 @@
                                 <materialDesign:PackIcon Kind="CheckAll" Width="18" Height="18"/>
                             </Button>
                             
-                            <ComboBox Grid.Column="2"
-                                      materialDesign:HintAssist.Hint="项目筛选"
-                                      ItemsSource="{Binding Projects}"
-                                      SelectedItem="{Binding FilterProject, Mode=TwoWay}"
-                                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                      Width="100" Margin="0,0,12,0"/>
+                            <Button Grid.Column="2" ToolTip="取消选中" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Command="{Binding ClearSelectionCommand}" HorizontalAlignment="Left" Margin="0,0,12,0">
+                                <materialDesign:PackIcon Kind="CheckboxBlankOutline" Width="18" Height="18"/>
+                            </Button>
                             
-                            <ComboBox Grid.Column="3"
-                                      materialDesign:HintAssist.Hint="状态筛选"
-                                      ItemsSource="{Binding Statuses}"
-                                      SelectedItem="{Binding FilterStatus, Mode=TwoWay}"
+                            <ComboBox Grid.Column="3" ToolTip="选择任务显示状态" 
+                                      ItemsSource="{Binding ShowStatusOptions}"
+                                      SelectedItem="{Binding SelectedShowStatusOption, Mode=TwoWay}"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                      Width="100" Margin="0,0,12,0"/>
-                            
-                            <TextBox Grid.Column="4"
-                                     materialDesign:HintAssist.Hint="名称筛选"
-                                     Text="{Binding FilterName, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                                      Width="100" HorizontalAlignment="Left" Margin="0,0,12,0">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Display}" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </Grid>
                     </Border>
 
@@ -228,7 +248,7 @@
                                     <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="8,0,0,0">
                                         <Button ToolTip="修改任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
                                                 Command="{Binding DataContext.EditTaskCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                Width="24" Height="24">
+                                                Width="24" Height="24" Margin="4,0,0,0">
                                             <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
                                         </Button>
                                         <Button ToolTip="删除任务" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
@@ -254,10 +274,6 @@
                                         
                                         <TextBlock Text="创建：" Foreground="#9E9E9E" FontSize="11"/>
                                         <TextBlock Text="{Binding CreatedAtDisplay}" Margin="0,0,12,0" 
-                                                   Foreground="#616161" FontSize="11"/>
-                                        
-                                        <TextBlock Text="显示：" Foreground="#9E9E9E" FontSize="11"/>
-                                        <TextBlock Text="{Binding IsShow, Converter={StaticResource BoolToStringConverter}}" 
                                                    Foreground="#616161" FontSize="11"/>
                                     </StackPanel>
                                 </Grid>

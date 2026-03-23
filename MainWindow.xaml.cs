@@ -52,6 +52,61 @@ namespace DayJobRecord
         }
     }
 
+    public class BoolToVisibilityIconConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool b && b)
+            {
+                return "VisibilityOff";
+            }
+            return "Visibility";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BoolToShowToolTipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool b && b)
+            {
+                return "点击隐藏任务";
+            }
+            return "点击显示任务";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BoolInverterConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool b)
+            {
+                return !b;
+            }
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is bool b)
+            {
+                return !b;
+            }
+            return false;
+        }
+    }
+
     public partial class MainWindow : Window
     {
         public MainWindow()
