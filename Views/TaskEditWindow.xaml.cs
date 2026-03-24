@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,6 +53,18 @@ namespace DayJobRecord.Views
         {
             get => Task.IsShow;
             set => Task.IsShow = value;
+        }
+
+        public DateTime? PlannedStartDate
+        {
+            get => Task.PlannedStartDate;
+            set => Task.PlannedStartDate = value;
+        }
+
+        public DateTime? PlannedEndDate
+        {
+            get => Task.PlannedEndDate;
+            set => Task.PlannedEndDate = value;
         }
 
         public TaskEditWindow() : this(null)

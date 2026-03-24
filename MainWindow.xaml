@@ -248,8 +248,12 @@
                                         <TextBlock Text="{Binding PriorityDisplay}" Margin="0,0,12,0" 
                                                    Foreground="#616161" FontSize="11"/>
                                         
-                                        <TextBlock Text="创建：" Foreground="#9E9E9E" FontSize="11"/>
-                                        <TextBlock Text="{Binding CreatedAtDisplay}" Margin="0,0,12,0" 
+                                        <TextBlock Text="开始：" Foreground="#9E9E9E" FontSize="11"/>
+                                        <TextBlock Text="{Binding PlannedStartDateDisplay}" Margin="0,0,12,0" 
+                                                   Foreground="#616161" FontSize="11"/>
+                                        
+                                        <TextBlock Text="结束：" Foreground="#9E9E9E" FontSize="11"/>
+                                        <TextBlock Text="{Binding PlannedEndDateDisplay}" Margin="0,0,12,0" 
                                                    Foreground="#616161" FontSize="11"/>
                                     </StackPanel>
                                 </Grid>
@@ -279,7 +283,7 @@
                         </Grid>
                     </Border>
 
-                    <ListBox Grid.Row="1" ItemsSource="{Binding TaskItems}"
+                    <ListBox Grid.Row="2" ItemsSource="{Binding TaskItems}"
                              SelectedItem="{Binding SelectedTaskItem}"
                              Style="{StaticResource MaterialDesignListBox}"
                              Background="Transparent"

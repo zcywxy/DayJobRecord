@@ -79,6 +79,8 @@ namespace DayJobRecord.Services
                 AddColumnIfNotExists(connection, "TaskItems", "IsReportItem", "INTEGER DEFAULT 1");
                 AddColumnIfNotExists(connection, "Tasks", "CreatedAt", "TEXT DEFAULT ''");
                 AddColumnIfNotExists(connection, "Tasks", "Project", "TEXT DEFAULT ''");
+                AddColumnIfNotExists(connection, "Tasks", "PlannedStartDate", "TEXT DEFAULT ''");
+                AddColumnIfNotExists(connection, "Tasks", "PlannedEndDate", "TEXT DEFAULT ''");
                 AddColumnIfNotExists(connection, "TaskItems", "StartDate", "TEXT DEFAULT ''");
                 AddColumnIfNotExists(connection, "TaskItems", "EndDate", "TEXT DEFAULT ''");
             }
@@ -144,6 +146,16 @@ namespace DayJobRecord.Services
                         
                         task.Project = reader["Project"]?.ToString() ?? "";
                         
+                        if (reader["PlannedStartDate"] != DBNull.Value && DateTime.TryParse(reader["PlannedStartDate"]?.ToString(), out var plannedStartDate))
+                        {
+                            task.PlannedStartDate = plannedStartDate;
+                        }
+                        
+                        if (reader["PlannedEndDate"] != DBNull.Value && DateTime.TryParse(reader["PlannedEndDate"]?.ToString(), out var plannedEndDate))
+                        {
+                            task.PlannedEndDate = plannedEndDate;
+                        }
+                        
                         tasks.Add(task);
                     }
                 }
@@ -156,7 +168,7 @@ namespace DayJobRecord.Services
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "INSERT INTO Tasks (Name, TaskType, Status, Priority, IsShow, CreatedAt, Project) VALUES (@Name, @TaskType, @Status, @Priority, @IsShow, @CreatedAt, @Project); SELECT last_insert_rowid();";
+                string sql = "INSERT INTO Tasks (Name, TaskType, Status, Priority, IsShow, CreatedAt, Project, PlannedStartDate, PlannedEndDate) VALUES (@Name, @TaskType, @Status, @Priority, @IsShow, @CreatedAt, @Project, @PlannedStartDate, @PlannedEndDate); SELECT last_insert_rowid();";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Name", task.Name);
@@ -166,6 +178,8 @@ namespace DayJobRecord.Services
                     command.Parameters.AddWithValue("@IsShow", task.IsShow ? 1 : 0);
                     command.Parameters.AddWithValue("@CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                     command.Parameters.AddWithValue("@Project", task.Project ?? "");
+                    command.Parameters.AddWithValue("@PlannedStartDate", task.PlannedStartDate?.ToString("yyyy-MM-dd") ?? "");
+                    command.Parameters.AddWithValue("@PlannedEndDate", task.PlannedEndDate?.ToString("yyyy-MM-dd") ?? "");
                     return Convert.ToInt32(command.ExecuteScalar());
                 }
             }
@@ -176,7 +190,7 @@ namespace DayJobRecord.Services
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string sql = "UPDATE Tasks SET Name = @Name, TaskType = @TaskType, Status = @Status, Priority = @Priority, IsShow = @IsShow, Project = @Project WHERE Id = @Id";
+                string sql = "UPDATE Tasks SET Name = @Name, TaskType = @TaskType, Status = @Status, Priority = @Priority, IsShow = @IsShow, Project = @Project, PlannedStartDate = @PlannedStartDate, PlannedEndDate = @PlannedEndDate WHERE Id = @Id";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Name", task.Name);
@@ -185,6 +199,8 @@ namespace DayJobRecord.Services
                     command.Parameters.AddWithValue("@Priority", task.Priority);
                     command.Parameters.AddWithValue("@IsShow", task.IsShow ? 1 : 0);
                     command.Parameters.AddWithValue("@Project", task.Project ?? "");
+                    command.Parameters.AddWithValue("@PlannedStartDate", task.PlannedStartDate?.ToString("yyyy-MM-dd") ?? "");
+                    command.Parameters.AddWithValue("@PlannedEndDate", task.PlannedEndDate?.ToString("yyyy-MM-dd") ?? "");
                     command.Parameters.AddWithValue("@Id", task.Id);
                     command.ExecuteNonQuery();
                 }

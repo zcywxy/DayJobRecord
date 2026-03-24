@@ -15,6 +15,8 @@ namespace DayJobRecord.Models
         private bool _isSelected;
         private bool _isShow = true;
         private DateTime _createdAt;
+        private DateTime? _plannedStartDate;
+        private DateTime? _plannedEndDate;
         private string _project;
 
         public int Id
@@ -108,6 +110,21 @@ namespace DayJobRecord.Models
             get => _project;
             set { _project = value; OnPropertyChanged(nameof(Project)); }
         }
+
+        public DateTime? PlannedStartDate
+        {
+            get => _plannedStartDate;
+            set { _plannedStartDate = value; OnPropertyChanged(nameof(PlannedStartDate)); OnPropertyChanged(nameof(PlannedStartDateDisplay)); }
+        }
+
+        public DateTime? PlannedEndDate
+        {
+            get => _plannedEndDate;
+            set { _plannedEndDate = value; OnPropertyChanged(nameof(PlannedEndDate)); OnPropertyChanged(nameof(PlannedEndDateDisplay)); }
+        }
+
+        public string PlannedStartDateDisplay => PlannedStartDate?.ToString("yyyy-MM-dd") ?? "";
+        public string PlannedEndDateDisplay => PlannedEndDate?.ToString("yyyy-MM-dd") ?? "";
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
